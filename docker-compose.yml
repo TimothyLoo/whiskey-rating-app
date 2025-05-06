@@ -1,0 +1,28 @@
+services:
+  # vite/react application container
+  client:
+    container_name: whiskey-app
+    image: whiskey-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - .env:/app/.env
+      - client_data:/app/node_modules
+    ports:
+      - ${CLIENT_PORT}:${CLIENT_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:${CLIENT_PORT}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  client_data:
+    driver: local
+    name: react_chatbot
+
+networks:
+  default:
+    name: whiskey-network
