@@ -12,6 +12,8 @@ services:
       - client_data:/app/node_modules
     ports:
       - ${CLIENT_PORT}:${CLIENT_PORT}
+      - 4173:4173
+      - 3000:3000
     healthcheck:
       test: ["CMD", "curl", "http://localhost:${CLIENT_PORT}"]
       interval: 30s
