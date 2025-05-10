@@ -15,17 +15,13 @@ export default defineConfig({
       '/api': `http://express_server:${process.env.SERVER_PORT}`, // have to use the container name
     },
   },
-  // base: '/my-pwa-app/', // important for GitHub Pages (replace with your repo name)
+  base: '/whiskey-rating-app/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
-      base: '/whiskey-rating-app/',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}'],
-      },
       manifest: {
         name: 'Whiskey App',
         short_name: 'WhiskeyApp',
