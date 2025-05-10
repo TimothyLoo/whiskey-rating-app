@@ -20,7 +20,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
+      base: '/whiskey-rating-app/',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}'],
+      },
       manifest: {
         name: 'Whiskey App',
         short_name: 'WhiskeyApp',
