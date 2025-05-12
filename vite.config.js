@@ -11,11 +11,8 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: process.env.CLIENT_PORT,
-    proxy: {
-      '/api': `http://express_server:${process.env.SERVER_PORT}`, // have to use the container name
-    },
   },
-  base: '/whiskey-rating-app/',
+  base: '/whiskey-rating-app',
   plugins: [
     react(),
     VitePWA({
