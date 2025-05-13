@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '../utils/supabase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,10 +9,6 @@ const Login = () => {
   const sendMagicLink = async (e) => {
     e.preventDefault();
 
-    const supabase = createClient(
-      import.meta.env.VITE_REACT_APP_SUPABASE_URL,
-      import.meta.env.VITE_REACT_APP_SUPABASE_ANON_KEY
-    );
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email,
     });

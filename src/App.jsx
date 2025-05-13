@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 // import { jwtDecode } from 'jwt-decode';
 import './App.css';
 import Login from './pages/Login';
+import WhiskeyList from './pages/WhiskeyList';
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -11,7 +12,8 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const jwt = await JSON.parse(await localStorage.getItem('jwt'))?.expires_at;
-      if (!jwt) {
+      const currentTime = await Math.floor(Date.now() / 1000);
+      if (!jwt || jwt < currentTime) {
         // put JWT in local storage from login hash
         const params = await new URLSearchParams(window.location.hash.substring(1));
 
@@ -24,10 +26,9 @@ export default function App() {
 
       // route if valid
       const jwtExpires = await JSON.parse(await localStorage.getItem('jwt'))?.expires_at;
-      const currentTime = await Math.floor(Date.now() / 1000);
       if (jwtExpires && jwtExpires > currentTime) {
         try {
-          await navigate(`${import.meta.env.BASE_URL}`);
+          await navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
         } catch (error) {
           await navigate(`${import.meta.env.BASE_URL}/login`);
         }
@@ -44,6 +45,7 @@ export default function App() {
   return (
     <Routes>
       <Route path={`${import.meta.env.BASE_URL}/login`} element={<Login />} />
+      <Route path={`${import.meta.env.BASE_URL}/whiskey-list`} element={<WhiskeyList />} />
       <Route
         path={`${import.meta.env.BASE_URL}/*`}
         element={
