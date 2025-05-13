@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import Login from './pages/Login';
 import WhiskeyList from './pages/WhiskeyList';
+import Whiskey from './pages/Whiskey';
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -46,6 +47,7 @@ export default function App() {
     <Routes>
       <Route path={`${import.meta.env.BASE_URL}/login`} element={<Login />} />
       <Route path={`${import.meta.env.BASE_URL}/whiskey-list`} element={<WhiskeyList />} />
+      <Route path={`${import.meta.env.BASE_URL}/whiskey/:id`} element={<Whiskey />} />
       <Route
         path={`${import.meta.env.BASE_URL}/*`}
         element={
