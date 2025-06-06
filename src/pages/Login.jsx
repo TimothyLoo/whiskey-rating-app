@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import supabase from '../utils/supabase';
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const sendMagicLink = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
 
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email,
     });
+
+    setLoading(false);
 
     if (error) {
       setError('Error sending magic link. Please try again.');
@@ -19,6 +25,7 @@ const Login = () => {
     } else {
       setSuccess('Magic link sent successfully! Please check your email.');
       setError(null);
+      setLoading(true);
     }
   };
 
@@ -29,13 +36,14 @@ const Login = () => {
       <form onSubmit={sendMagicLink}>
         <div>
           <label>Email: </label>
-          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
         </div>
-        <button type='submit'>Sign In</button>
+        <button type='submit' disabled={loading}>
+          {loading ? 'Sending...' : 'Sign In'}
+        </button>
       </form>
+      {loading && <div>Loading...</div>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
-};
-
-export default Login;
+}
