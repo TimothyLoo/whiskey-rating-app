@@ -5,9 +5,12 @@ import './App.css';
 import Login from './pages/Login';
 import WhiskeyList from './pages/WhiskeyList';
 import Whiskey from './pages/Whiskey';
+import WhiskeyForm from './pages/WhiskeyForm';
+import WhiskeyRatingForm from './pages/WhiskeyRatingForm';
 
 export default function App() {
   const [count, setCount] = useState(0);
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,22 +47,57 @@ export default function App() {
   }
 
   return (
-    <Routes>
-      <Route path={`${import.meta.env.BASE_URL}/login`} element={<Login />} />
-      <Route path={`${import.meta.env.BASE_URL}/whiskey-list`} element={<WhiskeyList />} />
-      <Route path={`${import.meta.env.BASE_URL}/whiskey/:id`} element={<Whiskey />} />
-      <Route
-        path={`${import.meta.env.BASE_URL}/*`}
-        element={
-          <div className='fullscreen'>
-            <div>Whiskey App</div>
-            <div>{count}</div>
-            <button type='button' onClick={handleClick}>
-              Count
-            </button>
-          </div>
-        }
-      />
-    </Routes>
+    <>
+      <Routes>
+        <Route path={`${import.meta.env.BASE_URL}/login`} element={<Login email={email} setEmail={setEmail} />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey-list`} element={<WhiskeyList />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey/:id`} element={<Whiskey />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey/:id/add-rating`} element={<WhiskeyRatingForm />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey/new`} element={<WhiskeyForm email={email} />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey/:id/edit`} element={<WhiskeyForm email={email} />} />
+        <Route
+          path={`${import.meta.env.BASE_URL}/*`}
+          element={
+            <div className='fullscreen'>
+              <div>Whiskey App</div>
+              <div>{count}</div>
+              <button type='button' onClick={handleClick}>
+                Count
+              </button>
+            </div>
+          }
+        />
+      </Routes>
+      <button
+        type='button'
+        onClick={() => navigate(`${import.meta.env.BASE_URL}/whiskey-list`)}
+        style={{
+          position: 'fixed',
+          bottom: '1rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          cursor: 'pointer',
+        }}
+        aria-label='Home'>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='32'
+          height='32'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          strokeWidth='2'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <path d='M3 9.5L12 4l9 5.5' />
+          <path d='M4 10v10h16V10' />
+          <path d='M9 21V13h6v8' />
+        </svg>
+      </button>
+    </>
   );
 }

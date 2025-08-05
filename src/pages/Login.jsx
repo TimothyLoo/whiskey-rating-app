@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import supabase from '../utils/supabase';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
+export default function Login({ email, setEmail }) {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,7 @@ export default function Login() {
       setError('Error sending magic link. Please try again.');
       setSuccess(null);
     } else {
-      setSuccess('Magic link sent successfully! Please check your email.');
+      setSuccess('Magic link sent successfully! Please check your email. You may close this window.');
       setError(null);
       setLoading(true);
     }

@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import WhiskeyForm from './WhiskeyForm';
 
 export default function WhiskeyList() {
   const [whiskeys, setWhiskeys] = useState([]);
@@ -39,10 +40,33 @@ export default function WhiskeyList() {
   return (
     <>
       <h1>Whiskey List</h1>
+      <button style={{ marginBottom: '16px' }} onClick={() => navigate(`${import.meta.env.BASE_URL}/whiskey/new`)}>
+        Add New Whiskey
+      </button>
       <List>
         {whiskeys.map((whiskey) => (
           <div key={whiskey.id}>
-            <ListItem onClick={() => handleClick(whiskey.id)}>
+            <ListItem
+              secondaryAction={
+                <button
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    marginLeft: '8px',
+                  }}
+                  title='Edit'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`${import.meta.env.BASE_URL}/whiskey/${whiskey.id}/edit`);
+                  }}>
+                  <span role='img' aria-label='edit'>
+                    ✏️
+                  </span>
+                </button>
+              }
+              onClick={() => handleClick(whiskey.id)}>
               <ListItemAvatar>
                 <Avatar alt={whiskey.name} src={undefined} />
               </ListItemAvatar>
