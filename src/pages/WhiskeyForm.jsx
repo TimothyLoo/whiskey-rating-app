@@ -38,18 +38,18 @@ export default function WhiskeyForm({ email, whiskey }) {
     let result;
     if (id) {
       // Edit whiskey
-      const { data, error } = await supabase.from('whiskey').update({ name, description }).eq('id', id);
+      const { data, error } = await supabase.from('whiskey').update({ name }).eq('id', id);
       result = { data, error };
     } else {
       // Add new whiskey
-      const { data, error } = await supabase.from('whiskey').insert([{ name, description, email }]);
+      const { data, error } = await supabase.from('whiskey').insert([{ name: name, created_by: email }]);
       result = { data, error };
     }
     setLoading(false);
     if (result.error) {
       setError(result.error.message);
     } else {
-      navigate(`${import.meta.env.BASE_URL}/whiskey`);
+      navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
     }
   }
 
@@ -64,7 +64,7 @@ export default function WhiskeyForm({ email, whiskey }) {
     } else {
       setName('');
       setDescription('');
-      navigate(`${import.meta.env.BASE_URL}/whiskey`);
+      navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
     }
   }
 
@@ -89,7 +89,6 @@ export default function WhiskeyForm({ email, whiskey }) {
             id='description'
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            required
             style={{ width: '100%' }}
           />
         </div>

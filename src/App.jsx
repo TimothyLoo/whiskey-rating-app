@@ -21,11 +21,24 @@ export default function App() {
         // put JWT in local storage from login hash
         const params = await new URLSearchParams(window.location.hash.substring(1));
 
-        const result = await {};
+        const result = {};
         for (const [key, value] of params.entries()) {
-          result[key] = await value;
+          result[key] = value;
         }
         await localStorage.setItem('jwt', JSON.stringify(result));
+      }
+
+      // set email from sb-* auth token if available
+      const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
+      if (jwtKey) {
+        try {
+          const tokenObj = JSON.parse(localStorage.getItem(jwtKey));
+          if (tokenObj?.user?.email) {
+            setEmail(tokenObj.user.email);
+          }
+        } catch (e) {
+          // ignore parse errors
+        }
       }
 
       // route if valid
