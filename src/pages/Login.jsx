@@ -12,8 +12,16 @@ export default function Login({ email, setEmail }) {
     setError(null);
     setSuccess(null);
 
+    const redirectUrl =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3333/whiskey-rating-app'
+        : 'https://timothyloo.github.io/whiskey-rating-app';
+
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email,
+      options: {
+        emailRedirectTo: redirectUrl,
+      },
     });
 
     setLoading(false);
