@@ -13,30 +13,44 @@ export default function WhiskeyRatingForm() {
 
   useEffect(() => {
     (async () => {
-      const jwt = localStorage.getItem('jwt');
-      const { access_token, refresh_token, email } = jwt ? JSON.parse(jwt) : {};
+      const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
+      const jwtRaw = jwtKey ? localStorage.getItem(jwtKey) : null;
+      const jwt = jwtRaw ? JSON.parse(jwtRaw) : null;
+      const { access_token, refresh_token, user } = jwt || {};
       await supabase.auth.setSession({ access_token, refresh_token });
-      if (!email) return;
-      const { data, error } = await supabase
-        .from('rating')
-        .select('*')
-        .eq('whiskey_fk', id)
-        .eq('email', email)
-        .single();
-      if (!error && data) {
-        setTaste(data.taste || '');
-        setFinish(data.finish || '');
-        setRatingId(data.id);
+      if (routeRatingId) {
+        // Edit mode: fetch by rating id
+        const { data, error } = await supabase.from('rating').select('*').eq('id', routeRatingId).single();
+        if (!error && data) {
+          setTaste(data.taste || '');
+          setFinish(data.finish || '');
+          setRatingId(data.id);
+        }
+      } else {
+        // Add mode: fetch by whiskey and email
+        const { data, error } = await supabase
+          .from('rating')
+          .select('*')
+          .eq('whiskey_fk', id)
+          .eq('email', user.email)
+          .single();
+        if (!error && data) {
+          setTaste(data.taste || '');
+          setFinish(data.finish || '');
+          setRatingId(data.id);
+        }
       }
     })();
-  }, [id]);
+  }, [id, routeRatingId]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const jwt = localStorage.getItem('jwt');
-    const { access_token, refresh_token, email } = jwt ? JSON.parse(jwt) : {};
+    const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
+    const jwtRaw = jwtKey ? localStorage.getItem(jwtKey) : null;
+    const jwt = jwtRaw ? JSON.parse(jwtRaw) : null;
+    const { access_token, refresh_token, user } = jwt || {};
     await supabase.auth.setSession({ access_token, refresh_token });
     let result;
     if (ratingId) {
@@ -45,7 +59,9 @@ export default function WhiskeyRatingForm() {
       result = { data, error };
     } else {
       // Insert new rating
-      const { data, error } = await supabase.from('rating').insert([{ taste, finish, whiskey_fk: id, email }]);
+      const { data, error } = await supabase
+        .from('rating')
+        .insert([{ taste, finish, whiskey_fk: id, created_by: user.email }]);
       result = { data, error };
     }
     setLoading(false);

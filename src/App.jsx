@@ -66,6 +66,7 @@ export default function App() {
         <Route path={`${import.meta.env.BASE_URL}/whiskey-list`} element={<WhiskeyList />} />
         <Route path={`${import.meta.env.BASE_URL}/whiskey/:id`} element={<Whiskey />} />
         <Route path={`${import.meta.env.BASE_URL}/whiskey/:id/add-rating`} element={<WhiskeyRatingForm />} />
+        <Route path={`${import.meta.env.BASE_URL}/whiskey/:id/edit-rating/:ratingId`} element={<WhiskeyRatingForm />} />
         <Route path={`${import.meta.env.BASE_URL}/whiskey/new`} element={<WhiskeyForm email={email} />} />
         <Route path={`${import.meta.env.BASE_URL}/whiskey/:id/edit`} element={<WhiskeyForm email={email} />} />
         <Route

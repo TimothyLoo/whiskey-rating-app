@@ -16,7 +16,7 @@ export default function Whiskey() {
       const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
       const jwtRaw = jwtKey ? localStorage.getItem(jwtKey) : null;
       const jwt = jwtRaw ? JSON.parse(jwtRaw) : null;
-      const { access_token, refresh_token, user } = jwt ? JSON.parse(jwt) : {};
+      const { access_token, refresh_token, user } = jwt || {};
       await supabase.auth.setSession({ access_token, refresh_token });
 
       const { data, error } = await supabase.from('rating').select('*').eq('whiskey_fk', id);
@@ -25,9 +25,9 @@ export default function Whiskey() {
         setError(error);
       } else {
         // Separate my rating from others by email
-        const my = data.find((r) => r.email === user.email);
+        const my = data.find((r) => r.created_by === user.email);
         setMyRating(my || null);
-        setRatings(data.filter((r) => r.email !== user.email));
+        setRatings(data.filter((r) => r.created_by !== user.email));
       }
       setLoading(false);
     })();
