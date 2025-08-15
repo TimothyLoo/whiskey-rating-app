@@ -1,54 +1,101 @@
 import React, { useState } from 'react';
 import supabase from '../utils/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login({ email, setEmail }) {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const navigate = useNavigate();
 
-  const sendMagicLink = async (e) => {
+  const sendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
 
-    const redirectUrl =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3333/whiskey-rating-app'
-        : 'https://timothyloo.github.io/whiskey-rating-app';
-
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email: email,
-      options: {
-        emailRedirectTo: redirectUrl,
-      },
     });
 
     setLoading(false);
 
     if (error) {
-      setError('Error sending magic link. Please try again.');
+      setError('Error sending OTP. Please try again.');
       setSuccess(null);
     } else {
-      setSuccess('Magic link sent successfully! Please check your email. You may close this window.');
+      setSuccess('OTP sent successfully! Please check your email for the code.');
+      setOtpSent(true);
       setError(null);
-      setLoading(true);
+    }
+  };
+
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: email,
+      token: otp,
+      type: 'email',
+    });
+    setLoading(false);
+    if (error) {
+      setError('Invalid OTP. Please try again.');
+    } else {
+      setSuccess('Login successful! Redirecting...');
+      navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Login with Email OTP</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={sendMagicLink}>
-        <div>
-          <label>Email: </label>
-          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
-        </div>
-        <button type='submit' disabled={loading}>
-          {loading ? 'Sending...' : 'Sign In'}
-        </button>
-      </form>
+      {!otpSent ? (
+        <form onSubmit={sendOtp}>
+          <div className='login-form-row'>
+            <label>Email: </label>
+            <input
+              className='login-input'
+              type='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+          <button type='submit' disabled={loading}>
+            {loading ? 'Sending...' : 'Send OTP'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={verifyOtp}>
+          <div className='login-form-row'>
+            <label>Email: </label>
+            <input className='login-input login-input-disabled' type='email' value={email} disabled />
+          </div>
+          <div className='login-form-row'>
+            <label>Enter OTP: </label>
+            <input
+              className='login-input login-otp-input'
+              type='number'
+              inputMode='numeric'
+              pattern='[0-9]*'
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+              required
+              disabled={loading}
+            />
+          </div>
+          <button type='submit' disabled={loading || !otp}>
+            {loading ? 'Verifying...' : 'Verify OTP'}
+          </button>
+        </form>
+      )}
       {loading && <div>Loading...</div>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
