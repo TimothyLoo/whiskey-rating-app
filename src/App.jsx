@@ -84,7 +84,16 @@ export default function App() {
       </Routes>
       <button
         type='button'
-        onClick={() => navigate(`${import.meta.env.BASE_URL}/whiskey-list`)}
+        onClick={() => {
+          const jwt = JSON.parse(localStorage.getItem('jwt'));
+          const expires = jwt?.expires_at;
+          const now = Math.floor(Date.now() / 1000);
+          if (expires && expires > now) {
+            navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
+          } else {
+            navigate(`${import.meta.env.BASE_URL}/login`);
+          }
+        }}
         style={{
           position: 'fixed',
           bottom: '1rem',
