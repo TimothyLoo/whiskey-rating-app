@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-// import { jwtDecode } from 'jwt-decode';
+import supabase from './utils/supabase';
 import './App.css';
 import Login from './pages/Login';
 import WhiskeyList from './pages/WhiskeyList';
@@ -84,11 +84,11 @@ export default function App() {
       </Routes>
       <button
         type='button'
-        onClick={() => {
-          const jwt = JSON.parse(localStorage.getItem('jwt'));
-          const expires = jwt?.expires_at;
-          const now = Math.floor(Date.now() / 1000);
-          if (expires && expires > now) {
+        onClick={async () => {
+          // Use Supabase session for more reliable auth check (especially in PWA)
+          const { data } = await supabase.auth.getSession();
+          const session = data?.session;
+          if (session && session.expires_at && session.expires_at > Math.floor(Date.now() / 1000)) {
             navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
           } else {
             navigate(`${import.meta.env.BASE_URL}/login`);
