@@ -3,6 +3,23 @@ import supabase from '../utils/supabase';
 import { useParams, useNavigate } from 'react-router-dom';
 
 export default function Whiskey() {
+  const RATING_KEYS = [
+    'nose',
+    'taste',
+    'body',
+    'complexity',
+    'balance',
+    'finish',
+    'uniqueness',
+    'drinkability',
+    'availability',
+    'price',
+  ];
+
+  function getTotal(rating) {
+    return RATING_KEYS.reduce((sum, key) => sum + (Number(rating[key]) || 0), 0);
+  }
+
   const [ratings, setRatings] = useState([]);
   const [myRating, setMyRating] = useState(null);
   const [error, setError] = useState(null);
@@ -57,9 +74,7 @@ export default function Whiskey() {
           {(() => {
             const allRatings = [...(myRating ? [myRating] : []), ...ratings];
             if (allRatings.length === 0) return 'N/A';
-            const avg =
-              allRatings.reduce((sum, r) => sum + (Number(r.taste) || 0) + (Number(r.finish) || 0), 0) /
-              allRatings.length;
+            const avg = allRatings.reduce((sum, r) => sum + getTotal(r), 0) / allRatings.length;
             return avg.toFixed(2);
           })()}
         </div>
@@ -84,51 +99,24 @@ export default function Whiskey() {
           <thead>
             <tr>
               <th>Total</th>
-              <th>Nose</th>
-              <th>Taste</th>
-              <th>Body</th>
-              <th>Complexity</th>
-              <th>Balance</th>
-              <th>Finish</th>
-              <th>Uniqueness</th>
-              <th>Drinkability</th>
-              <th>Availability</th>
-              <th>Price</th>
+              {RATING_KEYS.map((key) => (
+                <th key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {myRating ? (
               <tr>
-                <td>
-                  {[
-                    'nose',
-                    'taste',
-                    'body',
-                    'complexity',
-                    'balance',
-                    'finish',
-                    'uniqueness',
-                    'drinkability',
-                    'availability',
-                    'price',
-                  ].reduce((sum, key) => sum + (Number(myRating[key]) || 0), 0)}
-                </td>
-                <td>{myRating.nose}</td>
-                <td>{myRating.taste}</td>
-                <td>{myRating.body}</td>
-                <td>{myRating.complexity}</td>
-                <td>{myRating.balance}</td>
-                <td>{myRating.finish}</td>
-                <td>{myRating.uniqueness}</td>
-                <td>{myRating.drinkability}</td>
-                <td>{myRating.availability}</td>
-                <td>{myRating.price}</td>
+                <td>{getTotal(myRating)}</td>
+                {RATING_KEYS.map((key) => (
+                  <td key={key}>{myRating[key]}</td>
+                ))}
               </tr>
             ) : (
               <tr>
-                <td colSpan={4}>No rating yet</td>
-                <td colSpan={4}>No rating yet</td>
-                <td colSpan={4}>No rating yet</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
               </tr>
             )}
           </tbody>
@@ -141,53 +129,26 @@ export default function Whiskey() {
           <thead>
             <tr>
               <th>Total</th>
-              <th>Nose</th>
-              <th>Taste</th>
-              <th>Body</th>
-              <th>Complexity</th>
-              <th>Balance</th>
-              <th>Finish</th>
-              <th>Uniqueness</th>
-              <th>Drinkability</th>
-              <th>Availability</th>
-              <th>Price</th>
+              {RATING_KEYS.map((key) => (
+                <th key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {ratings.length > 0 ? (
               ratings.map((rating) => (
                 <tr key={rating.id}>
-                  <td>
-                    {[
-                      'nose',
-                      'taste',
-                      'body',
-                      'complexity',
-                      'balance',
-                      'finish',
-                      'uniqueness',
-                      'drinkability',
-                      'availability',
-                      'price',
-                    ].reduce((sum, key) => sum + (Number(rating[key]) || 0), 0)}
-                  </td>
-                  <td>{rating.nose}</td>
-                  <td>{rating.taste}</td>
-                  <td>{rating.body}</td>
-                  <td>{rating.complexity}</td>
-                  <td>{rating.balance}</td>
-                  <td>{rating.finish}</td>
-                  <td>{rating.uniqueness}</td>
-                  <td>{rating.drinkability}</td>
-                  <td>{rating.availability}</td>
-                  <td>{rating.price}</td>
+                  <td>{getTotal(rating)}</td>
+                  {RATING_KEYS.map((key) => (
+                    <td key={key}>{rating[key]}</td>
+                  ))}
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4}>No other ratings</td>
-                <td colSpan={4}>No other ratings</td>
-                <td colSpan={4}>No other ratings</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
+                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
               </tr>
             )}
           </tbody>
