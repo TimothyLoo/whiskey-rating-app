@@ -105,26 +105,21 @@ export default function Whiskey() {
             </tr>
           </thead>
           <tbody>
-            {myRating ? (
+            {myRating && (
               <tr>
                 <td>{getTotal(myRating)}</td>
                 {RATING_KEYS.map((key) => (
                   <td key={key}>{myRating[key]}</td>
                 ))}
               </tr>
-            ) : (
-              <tr>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No rating yet</td>
-              </tr>
             )}
           </tbody>
         </table>
+        {!myRating && <div>No rating yet</div>}
       </div>
 
       <h2>Other Ratings</h2>
-      <div className='whiskey-table-container'>
+      <div className='whiskey-table-container-vertical'>
         <table>
           <thead>
             <tr>
@@ -135,7 +130,7 @@ export default function Whiskey() {
             </tr>
           </thead>
           <tbody>
-            {ratings.length > 0 ? (
+            {ratings.length > 0 &&
               ratings.map((rating) => (
                 <tr key={rating.id}>
                   <td>{getTotal(rating)}</td>
@@ -143,17 +138,11 @@ export default function Whiskey() {
                     <td key={key}>{rating[key]}</td>
                   ))}
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
-                <td colSpan={(RATING_KEYS.length + 1) / 3}>No other ratings</td>
-              </tr>
-            )}
+              ))}
           </tbody>
         </table>
       </div>
+      {ratings.length === 0 && <div>No other ratings</div>}
     </div>
   );
 }
