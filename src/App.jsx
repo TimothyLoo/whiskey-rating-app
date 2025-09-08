@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+import supabase from './utils/supabase';
 import './App.css';
 import Login from './pages/Login';
 import WhiskeyList from './pages/WhiskeyList';
@@ -28,7 +29,7 @@ export default function App() {
       }
 
       // Use Supabase session for routing
-      const { data } = await import('./utils/supabase').then((m) => m.default.auth.getSession());
+      const { data } = await supabase.auth.getSession();
       const session = data?.session;
       const now = Math.floor(Date.now() / 1000);
       if (session && session.expires_at && session.expires_at > now) {
