@@ -137,6 +137,8 @@ export default function WhiskeyRatingForm() {
               value={fields[key]}
               onChange={handleChange}
               style={{ width: '100%' }}
+              inputMode='numeric'
+              pattern='[0-9]*'
             />
           </div>
         ))}
