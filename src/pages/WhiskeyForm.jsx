@@ -8,6 +8,7 @@ export default function WhiskeyForm({ email, whiskey }) {
   const [description, setDescription] = useState(whiskey?.description || '');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [createdBy, setCreatedBy] = useState(whiskey?.created_by || '');
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function WhiskeyForm({ email, whiskey }) {
         if (data) {
           setName(data.name || '');
           setDescription(data.description || '');
+          setCreatedBy(data.created_by || '');
         }
         if (error) {
           setError(error.message);
@@ -26,6 +28,7 @@ export default function WhiskeyForm({ email, whiskey }) {
       } else if (whiskey) {
         setName(whiskey.name || '');
         setDescription(whiskey.description || '');
+        setCreatedBy(whiskey.created_by || '');
       }
     }
     fetchWhiskey();
@@ -95,8 +98,19 @@ export default function WhiskeyForm({ email, whiskey }) {
         <button type='submit' disabled={loading}>
           {loading ? (id ? 'Saving...' : 'Adding...') : id ? 'Save Changes' : 'Add Whiskey'}
         </button>
-        {id && (
-          <button type='button' style={{ marginLeft: 8 }} onClick={handleDelete} disabled={loading}>
+        {id && createdBy === email && (
+          <button
+            type='button'
+            style={{ marginLeft: 8, color: 'red' }}
+            onClick={async () => {
+              const confirmed = window.confirm(
+                'Are you sure you want to delete this whiskey? You will lose all data related to this whiskey.'
+              );
+              if (confirmed) {
+                await handleDelete();
+              }
+            }}
+            disabled={loading}>
             Delete Whiskey
           </button>
         )}

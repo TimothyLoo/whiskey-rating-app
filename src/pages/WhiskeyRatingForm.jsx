@@ -54,7 +54,7 @@ export default function WhiskeyRatingForm() {
           .from('rating')
           .select('*')
           .eq('whiskey_fk', id)
-          .eq('email', user.email)
+          .eq('created_by', user.email)
           .single();
         if (!error && data) {
           setFields({
@@ -96,7 +96,9 @@ export default function WhiskeyRatingForm() {
       result = { data, error };
     } else {
       // Insert new rating
-      const { data, error } = await supabase.from('rating').insert([{ ...fields, whiskey_fk: id, email: user.email }]);
+      const { data, error } = await supabase
+        .from('rating')
+        .insert([{ ...fields, whiskey_fk: id, created_by: user.email }]);
       result = { data, error };
     }
     setLoading(false);
