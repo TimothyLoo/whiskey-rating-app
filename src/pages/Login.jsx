@@ -16,8 +16,10 @@ export default function Login({ email, setEmail }) {
     setError(null);
     setSuccess(null);
 
+    const lowerEmail = email.toLowerCase();
+
     const { error } = await supabase.auth.signInWithOtp({
-      email: email,
+      email: lowerEmail,
     });
 
     setLoading(false);
@@ -37,8 +39,9 @@ export default function Login({ email, setEmail }) {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    const lowerEmail = email.toLowerCase();
     const { data, error } = await supabase.auth.verifyOtp({
-      email: email,
+      email: lowerEmail,
       token: otp,
       type: 'email',
     });
@@ -63,7 +66,7 @@ export default function Login({ email, setEmail }) {
               className='login-input'
               type='email'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value.toLowerCase())}
               required
               disabled={loading}
             />
@@ -76,7 +79,7 @@ export default function Login({ email, setEmail }) {
         <form onSubmit={verifyOtp}>
           <div className='login-form-row'>
             <label>Email: </label>
-            <input className='login-input login-input-disabled' type='email' value={email} disabled />
+            <input className='login-input login-input-disabled' type='email' value={email.toLowerCase()} disabled />
           </div>
           <div className='login-form-row'>
             <label>Enter OTP: </label>

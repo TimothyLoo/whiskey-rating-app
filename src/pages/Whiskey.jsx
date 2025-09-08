@@ -41,10 +41,12 @@ export default function Whiskey() {
       if (error) {
         setError(error);
       } else {
-        // Separate my rating from others by email
-        const my = data.find((r) => r.created_by === user.email);
+        // Separate my rating from others by email (case-insensitive)
+        const my = data.find((r) => (r.created_by || r.email || '').toLowerCase() === (user.email || '').toLowerCase());
         setMyRating(my || null);
-        setRatings(data.filter((r) => r.created_by !== user.email));
+        setRatings(
+          data.filter((r) => (r.created_by || r.email || '').toLowerCase() !== (user.email || '').toLowerCase())
+        );
       }
       setLoading(false);
     })();

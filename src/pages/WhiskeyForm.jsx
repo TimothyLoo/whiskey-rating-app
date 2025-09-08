@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 export default function WhiskeyForm({ email, whiskey }) {
+  const lowerEmail = (email || '').toLowerCase();
   const [name, setName] = useState(whiskey?.name || '');
   const [description, setDescription] = useState(whiskey?.description || '');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [createdBy, setCreatedBy] = useState(whiskey?.created_by || '');
+  const [createdBy, setCreatedBy] = useState((whiskey?.created_by || '').toLowerCase());
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function WhiskeyForm({ email, whiskey }) {
         if (data) {
           setName(data.name || '');
           setDescription(data.description || '');
-          setCreatedBy(data.created_by || '');
+          setCreatedBy((data.created_by || '').toLowerCase());
         }
         if (error) {
           setError(error.message);
@@ -28,7 +29,7 @@ export default function WhiskeyForm({ email, whiskey }) {
       } else if (whiskey) {
         setName(whiskey.name || '');
         setDescription(whiskey.description || '');
-        setCreatedBy(whiskey.created_by || '');
+        setCreatedBy((whiskey.created_by || '').toLowerCase());
       }
     }
     fetchWhiskey();
@@ -45,7 +46,7 @@ export default function WhiskeyForm({ email, whiskey }) {
       result = { data, error };
     } else {
       // Add new whiskey
-      const { data, error } = await supabase.from('whiskey').insert([{ name: name, created_by: email }]);
+      const { data, error } = await supabase.from('whiskey').insert([{ name: name, created_by: lowerEmail }]);
       result = { data, error };
     }
     setLoading(false);
@@ -98,7 +99,7 @@ export default function WhiskeyForm({ email, whiskey }) {
         <button type='submit' disabled={loading}>
           {loading ? (id ? 'Saving...' : 'Adding...') : id ? 'Save Changes' : 'Add Whiskey'}
         </button>
-        {id && createdBy === email && (
+        {id && createdBy === lowerEmail && (
           <button
             type='button'
             style={{ marginLeft: 8, color: 'red' }}

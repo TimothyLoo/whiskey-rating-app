@@ -49,12 +49,13 @@ export default function WhiskeyRatingForm() {
           setRatingId(data.id);
         }
       } else {
-        // Add mode: fetch by whiskey and email
+        // Add mode: fetch by whiskey and email (lowercased)
+        const email = user.email ? user.email.toLowerCase() : '';
         const { data, error } = await supabase
           .from('rating')
           .select('*')
           .eq('whiskey_fk', id)
-          .eq('created_by', user.email)
+          .eq('created_by', email)
           .single();
         if (!error && data) {
           setFields({
@@ -95,10 +96,9 @@ export default function WhiskeyRatingForm() {
       const { data, error } = await supabase.from('rating').update(fields).eq('id', ratingId);
       result = { data, error };
     } else {
-      // Insert new rating
-      const { data, error } = await supabase
-        .from('rating')
-        .insert([{ ...fields, whiskey_fk: id, created_by: user.email }]);
+      // Insert new rating (created_by lowercased)
+      const email = user.email ? user.email.toLowerCase() : '';
+      const { data, error } = await supabase.from('rating').insert([{ ...fields, whiskey_fk: id, created_by: email }]);
       result = { data, error };
     }
     setLoading(false);

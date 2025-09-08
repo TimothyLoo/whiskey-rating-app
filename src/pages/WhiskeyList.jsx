@@ -18,8 +18,11 @@ export default function WhiskeyList() {
 
   useEffect(() => {
     (async () => {
-      const access_token = await JSON.parse(await localStorage.getItem('jwt'))?.access_token;
-      const refresh_token = await JSON.parse(await localStorage.getItem('jwt'))?.refresh_token;
+      const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
+      const jwtRaw = jwtKey ? localStorage.getItem(jwtKey) : null;
+      const jwt = jwtRaw ? JSON.parse(jwtRaw) : null;
+      const { access_token, refresh_token, user } = jwt || {};
+      const lowerEmail = (user?.email || '').toLowerCase();
       await supabase.auth.setSession({ access_token, refresh_token });
 
       const { data, error } = await supabase.from('whiskey').select('*');
@@ -27,7 +30,8 @@ export default function WhiskeyList() {
       if (error) {
         setError(error);
       } else {
-        setWhiskeys(data);
+        // If you need to filter or compare by created_by, do so in lowercase
+        setWhiskeys(data.map((w) => ({ ...w, created_by: (w.created_by || '').toLowerCase() })));
       }
       setLoading(false);
     })();
