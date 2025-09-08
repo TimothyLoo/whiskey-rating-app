@@ -79,89 +79,26 @@ export default function Whiskey() {
       {error && <p>Error: {error.message}</p>}
 
       <h2>My Rating</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nose</th>
-            <th>Taste</th>
-            <th>Body</th>
-            <th>Complexity</th>
-            <th>Balance</th>
-            <th>Finish</th>
-            <th>Uniqueness</th>
-            <th>Drinkability</th>
-            <th>Availability</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {myRating ? (
+      <div className='whiskey-table-container'>
+        <table>
+          <thead>
             <tr>
-              <td>{myRating.nose}</td>
-              <td>{myRating.taste}</td>
-              <td>{myRating.body}</td>
-              <td>{myRating.complexity}</td>
-              <td>{myRating.balance}</td>
-              <td>{myRating.finish}</td>
-              <td>{myRating.uniqueness}</td>
-              <td>{myRating.drinkability}</td>
-              <td>{myRating.availability}</td>
-              <td>{myRating.price}</td>
-              <td>
-                {[
-                  'nose',
-                  'taste',
-                  'body',
-                  'complexity',
-                  'balance',
-                  'finish',
-                  'uniqueness',
-                  'drinkability',
-                  'availability',
-                  'price',
-                ].reduce((sum, key) => sum + (Number(myRating[key]) || 0), 0)}
-              </td>
+              <th>Total</th>
+              <th>Nose</th>
+              <th>Taste</th>
+              <th>Body</th>
+              <th>Complexity</th>
+              <th>Balance</th>
+              <th>Finish</th>
+              <th>Uniqueness</th>
+              <th>Drinkability</th>
+              <th>Availability</th>
+              <th>Price</th>
             </tr>
-          ) : (
-            <tr>
-              <td colSpan={11}>No rating yet</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      <h2>Other Ratings</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nose</th>
-            <th>Taste</th>
-            <th>Body</th>
-            <th>Complexity</th>
-            <th>Balance</th>
-            <th>Finish</th>
-            <th>Uniqueness</th>
-            <th>Drinkability</th>
-            <th>Availability</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ratings.length > 0 ? (
-            ratings.map((rating) => (
-              <tr key={rating.id}>
-                <td>{rating.nose}</td>
-                <td>{rating.taste}</td>
-                <td>{rating.body}</td>
-                <td>{rating.complexity}</td>
-                <td>{rating.balance}</td>
-                <td>{rating.finish}</td>
-                <td>{rating.uniqueness}</td>
-                <td>{rating.drinkability}</td>
-                <td>{rating.availability}</td>
-                <td>{rating.price}</td>
+          </thead>
+          <tbody>
+            {myRating ? (
+              <tr>
                 <td>
                   {[
                     'nose',
@@ -174,17 +111,88 @@ export default function Whiskey() {
                     'drinkability',
                     'availability',
                     'price',
-                  ].reduce((sum, key) => sum + (Number(rating[key]) || 0), 0)}
+                  ].reduce((sum, key) => sum + (Number(myRating[key]) || 0), 0)}
                 </td>
+                <td>{myRating.nose}</td>
+                <td>{myRating.taste}</td>
+                <td>{myRating.body}</td>
+                <td>{myRating.complexity}</td>
+                <td>{myRating.balance}</td>
+                <td>{myRating.finish}</td>
+                <td>{myRating.uniqueness}</td>
+                <td>{myRating.drinkability}</td>
+                <td>{myRating.availability}</td>
+                <td>{myRating.price}</td>
               </tr>
-            ))
-          ) : (
+            ) : (
+              <tr>
+                <td colSpan={4}>No rating yet</td>
+                <td colSpan={4}>No rating yet</td>
+                <td colSpan={4}>No rating yet</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Other Ratings</h2>
+      <div className='whiskey-table-container'>
+        <table>
+          <thead>
             <tr>
-              <td colSpan={11}>No other ratings</td>
+              <th>Total</th>
+              <th>Nose</th>
+              <th>Taste</th>
+              <th>Body</th>
+              <th>Complexity</th>
+              <th>Balance</th>
+              <th>Finish</th>
+              <th>Uniqueness</th>
+              <th>Drinkability</th>
+              <th>Availability</th>
+              <th>Price</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {ratings.length > 0 ? (
+              ratings.map((rating) => (
+                <tr key={rating.id}>
+                  <td>
+                    {[
+                      'nose',
+                      'taste',
+                      'body',
+                      'complexity',
+                      'balance',
+                      'finish',
+                      'uniqueness',
+                      'drinkability',
+                      'availability',
+                      'price',
+                    ].reduce((sum, key) => sum + (Number(rating[key]) || 0), 0)}
+                  </td>
+                  <td>{rating.nose}</td>
+                  <td>{rating.taste}</td>
+                  <td>{rating.body}</td>
+                  <td>{rating.complexity}</td>
+                  <td>{rating.balance}</td>
+                  <td>{rating.finish}</td>
+                  <td>{rating.uniqueness}</td>
+                  <td>{rating.drinkability}</td>
+                  <td>{rating.availability}</td>
+                  <td>{rating.price}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4}>No other ratings</td>
+                <td colSpan={4}>No other ratings</td>
+                <td colSpan={4}>No other ratings</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
