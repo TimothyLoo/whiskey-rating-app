@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import supabase from './utils/supabase';
 import './App.css';
 import Login from './pages/Login';
 import WhiskeyList from './pages/WhiskeyList';
@@ -15,19 +14,6 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const jwt = await JSON.parse(await localStorage.getItem('jwt'))?.expires_at;
-      const currentTime = await Math.floor(Date.now() / 1000);
-      if (!jwt || jwt < currentTime) {
-        // put JWT in local storage from login hash
-        const params = await new URLSearchParams(window.location.hash.substring(1));
-
-        const result = {};
-        for (const [key, value] of params.entries()) {
-          result[key] = value;
-        }
-        await localStorage.setItem('jwt', JSON.stringify(result));
-      }
-
       // set email from sb-* auth token if available
       const jwtKey = Object.keys(localStorage).find((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
       if (jwtKey) {
@@ -41,9 +27,11 @@ export default function App() {
         }
       }
 
-      // route if valid
-      const jwtExpires = await JSON.parse(await localStorage.getItem('jwt'))?.expires_at;
-      if (jwtExpires && jwtExpires > currentTime) {
+      // Use Supabase session for routing
+      const { data } = await import('./utils/supabase').then((m) => m.default.auth.getSession());
+      const session = data?.session;
+      const now = Math.floor(Date.now() / 1000);
+      if (session && session.expires_at && session.expires_at > now) {
         try {
           await navigate(`${import.meta.env.BASE_URL}/whiskey-list`);
         } catch (error) {
