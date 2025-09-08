@@ -82,21 +82,50 @@ export default function Whiskey() {
       <table>
         <thead>
           <tr>
+            <th>Nose</th>
             <th>Taste</th>
+            <th>Body</th>
+            <th>Complexity</th>
+            <th>Balance</th>
             <th>Finish</th>
+            <th>Uniqueness</th>
+            <th>Drinkability</th>
+            <th>Availability</th>
+            <th>Price</th>
             <th>Total</th>
           </tr>
         </thead>
         <tbody>
           {myRating ? (
             <tr>
+              <td>{myRating.nose}</td>
               <td>{myRating.taste}</td>
+              <td>{myRating.body}</td>
+              <td>{myRating.complexity}</td>
+              <td>{myRating.balance}</td>
               <td>{myRating.finish}</td>
-              <td>{(Number(myRating.taste) || 0) + (Number(myRating.finish) || 0)}</td>
+              <td>{myRating.uniqueness}</td>
+              <td>{myRating.drinkability}</td>
+              <td>{myRating.availability}</td>
+              <td>{myRating.price}</td>
+              <td>
+                {[
+                  'nose',
+                  'taste',
+                  'body',
+                  'complexity',
+                  'balance',
+                  'finish',
+                  'uniqueness',
+                  'drinkability',
+                  'availability',
+                  'price',
+                ].reduce((sum, key) => sum + (Number(myRating[key]) || 0), 0)}
+              </td>
             </tr>
           ) : (
             <tr>
-              <td colSpan={3}>No rating yet</td>
+              <td colSpan={11}>No rating yet</td>
             </tr>
           )}
         </tbody>
@@ -106,8 +135,16 @@ export default function Whiskey() {
       <table>
         <thead>
           <tr>
+            <th>Nose</th>
             <th>Taste</th>
+            <th>Body</th>
+            <th>Complexity</th>
+            <th>Balance</th>
             <th>Finish</th>
+            <th>Uniqueness</th>
+            <th>Drinkability</th>
+            <th>Availability</th>
+            <th>Price</th>
             <th>Total</th>
           </tr>
         </thead>
@@ -115,14 +152,35 @@ export default function Whiskey() {
           {ratings.length > 0 ? (
             ratings.map((rating) => (
               <tr key={rating.id}>
+                <td>{rating.nose}</td>
                 <td>{rating.taste}</td>
+                <td>{rating.body}</td>
+                <td>{rating.complexity}</td>
+                <td>{rating.balance}</td>
                 <td>{rating.finish}</td>
-                <td>{(Number(rating.taste) || 0) + (Number(rating.finish) || 0)}</td>
+                <td>{rating.uniqueness}</td>
+                <td>{rating.drinkability}</td>
+                <td>{rating.availability}</td>
+                <td>{rating.price}</td>
+                <td>
+                  {[
+                    'nose',
+                    'taste',
+                    'body',
+                    'complexity',
+                    'balance',
+                    'finish',
+                    'uniqueness',
+                    'drinkability',
+                    'availability',
+                    'price',
+                  ].reduce((sum, key) => sum + (Number(rating[key]) || 0), 0)}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={3}>No other ratings</td>
+              <td colSpan={11}>No other ratings</td>
             </tr>
           )}
         </tbody>

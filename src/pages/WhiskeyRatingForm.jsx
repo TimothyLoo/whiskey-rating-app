@@ -2,9 +2,21 @@ import React, { useState, useEffect } from 'react';
 import supabase from '../utils/supabase';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const initialFields = {
+  nose: '',
+  body: '',
+  complexity: '',
+  balance: '',
+  uniqueness: '',
+  drinkability: '',
+  availability: '',
+  price: '',
+  taste: '',
+  finish: '',
+};
+
 export default function WhiskeyRatingForm() {
-  const [taste, setTaste] = useState('');
-  const [finish, setFinish] = useState('');
+  const [fields, setFields] = useState(initialFields);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [ratingId, setRatingId] = useState(null);
@@ -22,8 +34,18 @@ export default function WhiskeyRatingForm() {
         // Edit mode: fetch by rating id
         const { data, error } = await supabase.from('rating').select('*').eq('id', routeRatingId).single();
         if (!error && data) {
-          setTaste(data.taste || '');
-          setFinish(data.finish || '');
+          setFields({
+            nose: data.nose || '',
+            body: data.body || '',
+            complexity: data.complexity || '',
+            balance: data.balance || '',
+            uniqueness: data.uniqueness || '',
+            drinkability: data.drinkability || '',
+            availability: data.availability || '',
+            price: data.price || '',
+            taste: data.taste || '',
+            finish: data.finish || '',
+          });
           setRatingId(data.id);
         }
       } else {
@@ -35,13 +57,28 @@ export default function WhiskeyRatingForm() {
           .eq('email', user.email)
           .single();
         if (!error && data) {
-          setTaste(data.taste || '');
-          setFinish(data.finish || '');
+          setFields({
+            nose: data.nose || '',
+            body: data.body || '',
+            complexity: data.complexity || '',
+            balance: data.balance || '',
+            uniqueness: data.uniqueness || '',
+            drinkability: data.drinkability || '',
+            availability: data.availability || '',
+            price: data.price || '',
+            taste: data.taste || '',
+            finish: data.finish || '',
+          });
           setRatingId(data.id);
         }
       }
     })();
   }, [id, routeRatingId]);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFields((prev) => ({ ...prev, [name]: value }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -55,13 +92,11 @@ export default function WhiskeyRatingForm() {
     let result;
     if (ratingId) {
       // Update existing rating
-      const { data, error } = await supabase.from('rating').update({ taste, finish }).eq('id', ratingId);
+      const { data, error } = await supabase.from('rating').update(fields).eq('id', ratingId);
       result = { data, error };
     } else {
       // Insert new rating
-      const { data, error } = await supabase
-        .from('rating')
-        .insert([{ taste, finish, whiskey_fk: id, created_by: user.email }]);
+      const { data, error } = await supabase.from('rating').insert([{ ...fields, whiskey_fk: id, email: user.email }]);
       result = { data, error };
     }
     setLoading(false);
@@ -76,28 +111,35 @@ export default function WhiskeyRatingForm() {
     <div style={{ maxWidth: 400, margin: '0 auto' }}>
       <h1>{ratingId ? 'Edit Rating' : 'Add Rating'}</h1>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor='taste'>Taste:</label>
-          <input
-            id='taste'
-            type='text'
-            value={taste}
-            onChange={(e) => setTaste(e.target.value)}
-            required
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor='finish'>Finish:</label>
-          <input
-            id='finish'
-            type='text'
-            value={finish}
-            onChange={(e) => setFinish(e.target.value)}
-            required
-            style={{ width: '100%' }}
-          />
-        </div>
+        {/* Field configs for min/max */}
+        {[
+          { key: 'nose', min: 0, max: 10 },
+          { key: 'taste', min: 0, max: 20 },
+          { key: 'body', min: 0, max: 10 },
+          { key: 'complexity', min: 0, max: 10 },
+          { key: 'balance', min: 0, max: 10 },
+          { key: 'finish', min: 0, max: 10 },
+          { key: 'uniqueness', min: 0, max: 10 },
+          { key: 'drinkability', min: 0, max: 10 },
+          { key: 'availability', min: 0, max: 5 },
+          { key: 'price', min: 0, max: 5 },
+        ].map(({ key, min, max }) => (
+          <div style={{ marginBottom: 16 }} key={key}>
+            <label htmlFor={key} style={{ textTransform: 'capitalize' }}>
+              {key}:
+            </label>
+            <input
+              id={key}
+              name={key}
+              type='number'
+              min={min}
+              max={max}
+              value={fields[key]}
+              onChange={handleChange}
+              style={{ width: '100%' }}
+            />
+          </div>
+        ))}
         <button type='submit' disabled={loading}>
           {loading ? (ratingId ? 'Saving...' : 'Adding...') : ratingId ? 'Save Changes' : 'Add Rating'}
         </button>
